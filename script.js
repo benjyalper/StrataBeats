@@ -2,15 +2,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const audioFiles = [
         './sounds/Bass-drum.mp3',
         './sounds/Bass-drum.mp3',
-        './sounds/acoustic-side-stick-94277.mp3'
+        './sounds/Bass-drum.mp3' // Change to the correct audio files
     ];
 
     const gainNodes = [];
     const audioContexts = [];
-    const kickBuffers = []; // Create an array to hold separate kick buffers for each beat
-
-    let currentBPM = 120;
-    let isAllPlaying = false; // Define isAllPlaying
+    const kickBuffers = [];
 
     function createGainNode(index) {
         const gainNode = audioContexts[index].createGain();
@@ -20,16 +17,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function playBeat(index) {
-        if (kickBuffers[index]) { // Use the correct buffer for the beat
+        if (kickBuffers[index]) {
             const kickSource = audioContexts[index].createBufferSource();
-            kickSource.buffer = kickBuffers[index]; // Use the correct buffer for the beat
-            kickSource.connect(createGainNode(index));
+            kickSource.buffer = kickBuffers[index];
+            const gainNode = createGainNode(index);
+            gainNode.gain.value = parseFloat(volumeSliders[index].value);
+            kickSource.connect(gainNode);
             kickSource.start();
         }
     }
 
     function togglePlay(index) {
-        const isPlaying = intervalIds[index] !== null;
+        const isPlaying = intervals[index] !== null;
         if (isPlaying) {
             stopPlaying(index);
         } else {
@@ -38,46 +37,33 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function startPlaying(index) {
-        const interval = 60000 / currentBPM;
-        intervalIds[index] = setInterval(function () {
+        const interval = 60000 / parseFloat(bpmInputs[index].value);
+        intervals[index] = setInterval(function () {
             playBeat(index);
         }, interval);
         playButtons[index].textContent = 'Stop';
     }
 
     function stopPlaying(index) {
-        clearInterval(intervalIds[index]);
-        intervalIds[index] = null;
+        clearInterval(intervals[index]);
+        intervals[index] = null;
         playButtons[index].textContent = 'Play';
-    }
-
-    function setBPM(index) {
-        const newBPM = parseFloat(bpmInputs[index].value);
-        if (!isNaN(newBPM) && newBPM > 0) {
-            currentBPM = newBPM;
-            if (intervalIds[index] !== null) {
-                stopPlaying(index);
-                startPlaying(index);
-            }
-        } else {
-            alert('Please enter a valid BPM.');
-        }
     }
 
     const drumBeats = document.querySelectorAll('.drum-beat');
     const bpmInputs = document.querySelectorAll('.bpm-input');
-    const intervalIds = Array(drumBeats.length).fill(null);
     const playButtons = document.querySelectorAll('.play-button');
+    const volumeSliders = document.querySelectorAll('.volume-slider');
+    const intervals = Array(drumBeats.length).fill(null);
 
     drumBeats.forEach(function (drumBeat, index) {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         audioContexts.push(audioContext);
 
-        const volumeSlider = drumBeat.querySelector('.volume-slider');
         const setBpmButton = drumBeat.querySelector('.set-bpm-button');
 
-        volumeSlider.addEventListener('input', function () {
-            gainNodes[index].gain.value = parseFloat(volumeSlider.value);
+        volumeSliders[index].addEventListener('input', function () {
+            gainNodes[index].gain.value = parseFloat(volumeSliders[index].value);
         });
 
         playButtons[index].addEventListener('click', function () {
@@ -97,25 +83,30 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(data => audioContexts[index].decodeAudioData(data))
             .then(buffer => {
-                kickBuffers[index] = buffer; // Store the buffer for the beat
+                kickBuffers[index] = buffer;
             })
             .catch(error => console.error(`Error loading drum sound for file: ${audioFiles[index]}`, error));
     });
 
     // Button to start/stop all beats simultaneously
     const startAllButton = document.getElementById('startAllButton');
+    let isAllPlaying = false;
+
     startAllButton.addEventListener('click', function () {
-        isAllPlaying = !isAllPlaying;
         if (isAllPlaying) {
-            startAllButton.textContent = 'Stop All';
-            drumBeats.forEach(function (_, index) {
-                startPlaying(index);
-            });
-        } else {
-            startAllButton.textContent = 'Start All';
+            // Stop all beats
             drumBeats.forEach(function (_, index) {
                 stopPlaying(index);
             });
+            startAllButton.textContent = 'Start All';
+            isAllPlaying = false;
+        } else {
+            // Start all beats
+            drumBeats.forEach(function (_, index) {
+                startPlaying(index);
+            });
+            startAllButton.textContent = 'Stop All';
+            isAllPlaying = true;
         }
     });
 });
