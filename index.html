@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drum Beat Player</title>
+</head>
+<body>
+    <h1>Drum Beat Player</h1>
+
+    <!-- Drum Beat 1 -->
+    <div class="drum-beat">
+        <button class="play-button">Play</button>
+        <input type="number" class="bpm-input" placeholder="BPM" step="0.0001"> <!-- Allow up to 4 decimal places -->
+        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.5">
+        <button class="set-bpm-button">Set BPM</button>
+    </div>
+
+    <!-- Drum Beat 2 -->
+    <div class="drum-beat">
+        <button class="play-button">Play</button>
+        <input type="number" class="bpm-input" placeholder="BPM" step="0.0001">
+        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.5">
+        <button class="set-bpm-button">Set BPM</button>
+    </div>
+
+    <!-- Drum Beat 3 -->
+    <div class="drum-beat">
+        <button class="play-button">Play</button>
+        <input type="number" class="bpm-input" placeholder="BPM" step="0.0001">
+        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.5">
+        <button class="set-bpm-button">Set BPM</button>
+    </div>
+
+    <!-- Start All Button -->
+    <button id="startAllButton">Start All</button>
+
+    <script src="script.js"></script>
+</body>
+</html>

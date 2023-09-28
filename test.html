@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPM to BPS Converter</title>
+</head>
+<body>
+    <h1>BPM to BPS Converter</h1>
+    <div>
+        <label for="bpm">BPM (Beats Per Minute):</label>
+        <input type="number" id="bpm" placeholder="Enter BPM">
+        <button id="convertToBPS">Convert to BPS</button>
+        <p id="resultBPS"></p>
+    </div>
+    <div>
+        <label for="bps">BPS (Beats Per Second):</label>
+        <input type="number" id="bps" placeholder="Enter BPS">
+        <button id="convertToBPM">Convert to BPM</button>
+        <p id="resultBPM"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const bpmInput = document.getElementById('bpm');
+            const bpsInput = document.getElementById('bps');
+            const convertToBPSButton = document.getElementById('convertToBPS');
+            const convertToBPMButton = document.getElementById('convertToBPM');
+            const resultBPS = document.getElementById('resultBPS');
+            const resultBPM = document.getElementById('resultBPM');
+
+            // Function to convert BPM to BPS
+            function bpmToBps(bpm) {
+                return bpm / 60;
+            }
+
+            // Function to convert BPS to BPM
+            function bpsToBpm(bps) {
+                return bps * 60;
+            }
+
+            // Event listener for "Convert to BPS" button
+            convertToBPSButton.addEventListener('click', function () {
+                const bpmValue = parseFloat(bpmInput.value);
+                if (!isNaN(bpmValue)) {
+                    const bpsValue = bpmToBps(bpmValue).toFixed(2);
+                    resultBPS.textContent = `BPS: ${bpsValue}`;
+                } else {
+                    resultBPS.textContent = 'Invalid input';
+                }
+            });
+
+            // Event listener for "Convert to BPM" button
+            convertToBPMButton.addEventListener('click', function () {
+                const bpsValue = parseFloat(bpsInput.value);
+                if (!isNaN(bpsValue)) {
+                    const bpmValue = bpsToBpm(bpsValue).toFixed(2);
+                    resultBPM.textContent = `BPM: ${bpmValue}`;
+                } else {
+                    resultBPM.textContent = 'Invalid input';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
