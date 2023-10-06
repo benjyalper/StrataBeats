@@ -1,66 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BPM to BPS Converter</title>
-</head>
-<body>
-    <h1>BPM to BPS Converter</h1>
-    <div>
-        <label for="bpm">BPM (Beats Per Minute):</label>
-        <input type="number" id="bpm" placeholder="Enter BPM">
-        <button id="convertToBPS">Convert to BPS</button>
-        <p id="resultBPS"></p>
-    </div>
-    <div>
-        <label for="bps">BPS (Beats Per Second):</label>
-        <input type="number" id="bps" placeholder="Enter BPS">
-        <button id="convertToBPM">Convert to BPM</button>
-        <p id="resultBPM"></p>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const bpmInput = document.getElementById('bpm');
-            const bpsInput = document.getElementById('bps');
-            const convertToBPSButton = document.getElementById('convertToBPS');
-            const convertToBPMButton = document.getElementById('convertToBPM');
-            const resultBPS = document.getElementById('resultBPS');
-            const resultBPM = document.getElementById('resultBPM');
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BPM to Length per Beat Converter</title>
+    </head>
 
-            // Function to convert BPM to BPS
-            function bpmToBps(bpm) {
-                return bpm / 60;
-            }
+    <body>
+        <h1>BPM to Length per Beat Converter</h1>
 
-            // Function to convert BPS to BPM
-            function bpsToBpm(bps) {
-                return bps * 60;
-            }
+        <!-- BPM to BPS Conversion -->
+        <div>
+            <label for="bpm">BPM:</label>
+            <input type="number" id="bpm" placeholder="Enter BPM">
+            <button id="convertToBPS">Convert to Length per Beat (BPS)</button>
+            <p id="resultBPS">Result will appear here</p>
+        </div>
 
-            // Event listener for "Convert to BPS" button
-            convertToBPSButton.addEventListener('click', function () {
-                const bpmValue = parseFloat(bpmInput.value);
-                if (!isNaN(bpmValue)) {
-                    const bpsValue = bpmToBps(bpmValue).toFixed(2);
-                    resultBPS.textContent = `BPS: ${bpsValue}`;
-                } else {
-                    resultBPS.textContent = 'Invalid input';
+        <!-- BPS to BPM Conversion -->
+        <div>
+            <label for="bps">Length per Beat (BPS):</label>
+            <input type="number" id="bps" placeholder="Enter Length per Beat (BPS)">
+            <button id="convertToBPM">Convert to BPM</button>
+            <p id="resultBPM">Result will appear here</p>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const bpmInput = document.getElementById('bpm');
+                const bpsInput = document.getElementById('bps');
+                const convertToBPSButton = document.getElementById('convertToBPS');
+                const convertToBPMButton = document.getElementById('convertToBPM');
+                const resultBPS = document.getElementById('resultBPS');
+                const resultBPM = document.getElementById('resultBPM');
+
+                // Function to convert BPM to Length per Beat (BPS)
+                function bpmToBps(bpm) {
+                    return 60 / bpm;
                 }
-            });
 
-            // Event listener for "Convert to BPM" button
-            convertToBPMButton.addEventListener('click', function () {
-                const bpsValue = parseFloat(bpsInput.value);
-                if (!isNaN(bpsValue)) {
-                    const bpmValue = bpsToBpm(bpsValue).toFixed(2);
-                    resultBPM.textContent = `BPM: ${bpmValue}`;
-                } else {
-                    resultBPM.textContent = 'Invalid input';
+                // Function to convert Length per Beat (BPS) to BPM
+                function bpsToBpm(bps) {
+                    return 60 / bps;
                 }
+
+                // Event listener for "Convert to BPS" button
+                convertToBPSButton.addEventListener('click', function () {
+                    const bpmValue = parseFloat(bpmInput.value);
+                    if (!isNaN(bpmValue) && bpmValue > 0) {
+                        const bpsValue = bpmToBps(bpmValue).toFixed(2);
+                        resultBPS.textContent = `Length per Beat (BPS): ${bpsValue} seconds`;
+                    } else {
+                        resultBPS.textContent = 'Invalid input';
+                    }
+                });
+
+                // Event listener for "Convert to BPM" button
+                convertToBPMButton.addEventListener('click', function () {
+                    const bpsValue = parseFloat(bpsInput.value);
+                    if (!isNaN(bpsValue) && bpsValue > 0) {
+                        const bpmValue = bpsToBpm(bpsValue).toFixed(2);
+                        resultBPM.textContent = `BPM: ${bpmValue}`;
+                    } else {
+                        resultBPM.textContent = 'Invalid input';
+                    }
+                });
             });
-        });
-    </script>
-</body>
+        </script>
+    </body>
+
 </html>
