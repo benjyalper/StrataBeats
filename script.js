@@ -8,13 +8,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const gainNodes = [];
     const audioContexts = [];
     const kickBuffers = [];
-    const intervals = Array(audioFiles.length).fill(null);
 
     function createGainNode(index) {
         const gainNode = audioContexts[index].createGain();
         gainNode.connect(audioContexts[index].destination);
         gainNodes.push(gainNode);
         return gainNode;
+    }
+
+    function playBeat(index) {
+        if (kickBuffers[index]) {
+            const kickSource = audioContexts[index].createBufferSource();
+            kickSource.buffer = kickBuffers[index];
+            const gainNode = createGainNode(index);
+            gainNode.gain.value = parseFloat(volumeSliders[index].value);
+            kickSource.connect(gainNode);
+            kickSource.start();
+        }
     }
 
     function togglePlay(index) {
@@ -29,15 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function startPlaying(index) {
         const interval = 60000 / parseFloat(bpmInputs[index].value);
         intervals[index] = setInterval(function () {
-            const currentTime = audioContexts[index].currentTime;
-            const nextScheduledTime = Math.ceil(currentTime / interval) * interval;
-
-            const kickSource = audioContexts[index].createBufferSource();
-            kickSource.buffer = kickBuffers[index];
-            const gainNode = createGainNode(index);
-            gainNode.gain.value = parseFloat(volumeSliders[index].value);
-            kickSource.connect(gainNode);
-            kickSource.start(nextScheduledTime);
+            playBeat(index);
         }, interval);
         playButtons[index].textContent = 'Stop';
     }
@@ -52,10 +54,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const bpmInputs = document.querySelectorAll('.bpm-input');
     const playButtons = document.querySelectorAll('.play-button');
     const volumeSliders = document.querySelectorAll('.volume-slider');
+    const intervals = Array(drumBeats.length).fill(null);
 
     drumBeats.forEach(function (drumBeat, index) {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         audioContexts.push(audioContext);
+
+        const setBpmButton = drumBeat.querySelector('.set-bpm-button');
 
         volumeSliders[index].addEventListener('input', function () {
             gainNodes[index].gain.value = parseFloat(volumeSliders[index].value);
@@ -63,6 +68,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         playButtons[index].addEventListener('click', function () {
             togglePlay(index);
+        });
+
+        setBpmButton.addEventListener('click', function () {
+            setBPM(index);
         });
 
         fetch(audioFiles[index])
