@@ -48,8 +48,38 @@ document.addEventListener('DOMContentLoaded', function () {
         playButtons[index].textContent = 'Play';
     }
 
-    // ... (your previous code for other functions and event listeners)
+    const drumBeats = document.querySelectorAll('.drum-beat');
+    const bpmInputs = document.querySelectorAll('.bpm-input');
+    const playButtons = document.querySelectorAll('.play-button');
+    const volumeSliders = document.querySelectorAll('.volume-slider');
 
+    drumBeats.forEach(function (drumBeat, index) {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        audioContexts.push(audioContext);
+
+        volumeSliders[index].addEventListener('input', function () {
+            gainNodes[index].gain.value = parseFloat(volumeSliders[index].value);
+        });
+
+        playButtons[index].addEventListener('click', function () {
+            togglePlay(index);
+        });
+
+        fetch(audioFiles[index])
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok for file: ${audioFiles[index]}`);
+                }
+                return response.arrayBuffer();
+            })
+            .then(data => audioContexts[index].decodeAudioData(data))
+            .then(buffer => {
+                kickBuffers[index] = buffer;
+            })
+            .catch(error => console.error(`Error loading drum sound for file: ${audioFiles[index]}`, error));
+    });
+
+    // Button to start/stop all beats simultaneously
     const startAllButton = document.getElementById('startAllButton');
     let isAllPlaying = false;
 
@@ -71,5 +101,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-
-
